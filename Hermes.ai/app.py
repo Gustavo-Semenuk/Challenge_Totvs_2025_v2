@@ -3,6 +3,7 @@ from streamlit_option_menu import option_menu
 import requests
 import pandas as pd
 import numpy as np
+from ms_analytics.view.view_analytics_s3 import carregar_arquivo_para_dataframe
 
 
 # Estrutura Home
@@ -48,6 +49,9 @@ def upload():
 
 def analise():
     st.title("Análise")
+    arquivo = carregar_arquivo_para_dataframe(
+        'Challenge_TOTVS_2025_MassaDados_v1/export.csv')
+    arquivo
 
 
 def cluster():
