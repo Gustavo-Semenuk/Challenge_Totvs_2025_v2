@@ -1,0 +1,4 @@
+# Ignorar Oracle Client
+Hermes.ai/oracle_client/
+*.zip
+*.dll
