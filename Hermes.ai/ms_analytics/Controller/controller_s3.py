@@ -1,4 +1,4 @@
-from ms_analytics.Models.conexao_db import listar_arquivos, baixar_arquivo
+from ms_analytics.models.conexao_db import listar_arquivos, baixar_arquivo
 
 BUCKET_NAME = 'bucket-ms-upload'
 
