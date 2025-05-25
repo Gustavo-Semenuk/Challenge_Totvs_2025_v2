@@ -1,30 +1,31 @@
 import boto3
-import pandas as pd
-from io import BytesIO
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
+# Carrega variáveis do .env (credenciais e configs)
 load_dotenv()
 
-aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
-aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-
-import boto3
-
+# Cria o cliente do S3 usando boto3
 s3 = boto3.client(
     's3',
-    aws_access_key_id=aws_access_key_id,
-    aws_secret_access_key=aws_secret_access_key
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    region_name=os.getenv("AWS_DEFAULT_REGION")
 )
 
-bucket_name = 'bucket-ms-upload'
-arquivo_s3 = 'Challenge_TOTVS_2025_MassaDados_v1/clientes_desde.csv'
 
-# Baixar o arquivo do S3 em memória
-obj = s3.get_object(Bucket=bucket_name, Key=arquivo_s3)
-data = obj['Body'].read()
+def listar_arquivos(bucket_name):
+    """
+    Lista os arquivos no bucket S3
+    """
+    response = s3.list_objects_v2(Bucket=bucket_name)
+    arquivos = [obj['Key'] for obj in response.get('Contents', [])]
+    return arquivos
 
-# Ler o conteúdo com pandas (exemplo CSV)
-df = pd.read_csv(BytesIO(data),delimiter=";")
 
-print(df.head())
+def baixar_arquivo(bucket_name, file_key):
+    """
+    Baixa um arquivo específico do S3 e retorna como bytes
+    """
+    obj = s3.get_object(Bucket=bucket_name, Key=file_key)
+    return obj['Body'].read()
