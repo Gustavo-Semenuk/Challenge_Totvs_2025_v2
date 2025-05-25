@@ -11,16 +11,13 @@ def detectar_delimitador(conteudo):
     return sniffer.sniff(sample).delimiter
 
 
-# def carregar_arquivo_para_dataframe(file_key):
- #   conteudo = obter_arquivo_como_bytes(file_key)
- #   delimiter_detectado = detectar_delimitador(conteudo)
- #   df = pd.read_csv(pd.io.common.BytesIO(conteudo), sep=";",encoding='latin1')
- #   return df
-
 def carregar_arquivo_para_dataframe(file_key):
-    buffer = BytesIO(file_key)  # cria um buffer de memória a partir dos bytes
-    # usa o delimitador ";"
-    df = pd.read_csv(buffer, delimiter=';', encoding='utf-8')
+    conteudo = obter_arquivo_como_bytes(file_key)
+    sample = conteudo.decode('utf-8').splitlines()[0]
+    import csv
+    delimiter = csv.Sniffer().sniff(sample).delimiter
+    df = pd.read_csv(BytesIO(conteudo), sep=delimiter,
+                     on_bad_lines='skip', engine='python')
     return df
 
 
