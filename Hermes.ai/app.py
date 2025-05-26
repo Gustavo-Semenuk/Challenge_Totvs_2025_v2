@@ -4,14 +4,21 @@ import requests
 import pandas as pd
 import numpy as np
 from ms_analytics.view.view_analytics_s3 import carregar_arquivo_para_dataframe
+from ms_clusterizacao_knn.services.algoritmo_kmeans import processar_dados_clusterizacao, gerar_tabela_clientes_clusters, plotar_grafico_clusters
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 # Estrutura Home
 def home():
     # st.image("D:/Faculdade/Hermes.ai/imagens/mini_logo.jpg",use_container_width=100)
-    st.divider()
     st.title("Nossa solução")
-    st.write("A solução da Talk to Me by SophIA, vem com o objetivo de trazer funcionalidades que irão além das ferramentas convencionais de transcrição de áudio. Tudo dentro de uma plataforma web simples e intuitiva.")
+    st.write("Transforme seus dados em insights poderosos e revolucione a jornada do cliente\
+Nossa plataforma de inteligência de dados foi criada para ajudar empresas como a sua a personalizar a jornada do cliente de forma única.\
+Utilizando machine learning, inteligência artificial e modelos avançados de clusterização, extraímos o melhor dos seus dados e de fontes públicas para gerar insights que realmente fazem a diferença.\
+")
 # Fim da estrura da Home
 
 
@@ -49,13 +56,48 @@ def upload():
 
 def analise():
     st.title("Análise")
-    arquivo = carregar_arquivo_para_dataframe(
+    df = carregar_arquivo_para_dataframe(
         'Challenge_TOTVS_2025_MassaDados_v1/export.csv')
-    arquivo
+
+    df
+
+    # Resumo do DataFrame
+    print("\n📋 Informações gerais:")
+    info_geral = df.info()
+    info_geral
+
+    # Estatísticas descritivas
+    print("\n📊 Estatísticas descritivas:")
+    print(df.describe().T)
 
 
 def cluster():
-    st.title("Clusterização")
+    st.title('Clusterização')
+
+    # Caminho do arquivo CSV
+    caminho_csv = 'Challenge_TOTVS_2025_MassaDados_v1/export.csv'
+
+    # Processar os dados e adicionar a coluna de cluster
+    df_clusters = processar_dados_clusterizacao(caminho_csv)
+
+    # Tabela de clientes por cluster
+    st.subheader('Tabela de Clientes e seus Clusters')
+    tabela = gerar_tabela_clientes_clusters(df_clusters)
+    st.dataframe(tabela)
+
+    # Seleção das variáveis numéricas para o gráfico
+    colunas_numericas = ['VL_TOTAL_CONTRATO',
+                         'VLR_CONTRATACOES_12M', 'QTD_CONTRATACOES_12M']
+    x_col = st.selectbox(
+        'Escolha a variável para o eixo X:', colunas_numericas)
+    y_col = st.selectbox('Escolha a variável para o eixo Y:',
+                         colunas_numericas, index=1)
+
+    fig = plotar_grafico_clusters(df_clusters, x_col, y_col)
+    st.pyplot(fig)
+
+    # if __name__ == '__main__':
+    # cluster()
 
 
 # Sidebar para navegação
