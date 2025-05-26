@@ -13,13 +13,17 @@ import seaborn as sns
 
 # Estrutura Home
 def home():
-    # st.image("D:/Faculdade/Hermes.ai/imagens/mini_logo.jpg",use_container_width=100)
+
     st.title("Nossa solução")
     st.write("Transforme seus dados em insights poderosos e revolucione a jornada do cliente\
 Nossa plataforma de inteligência de dados foi criada para ajudar empresas como a sua a personalizar a jornada do cliente de forma única.\
 Utilizando machine learning, inteligência artificial e modelos avançados de clusterização, extraímos o melhor dos seus dados e de fontes públicas para gerar insights que realmente fazem a diferença.\
 ")
 # Fim da estrura da Home
+
+
+def formulario():
+    st.title("Formulario")
 
 
 def upload():
@@ -59,7 +63,7 @@ def analise():
     df = carregar_arquivo_para_dataframe(
         'Challenge_TOTVS_2025_MassaDados_v1/export.csv')
 
-    df
+    st.dataframe(df)
 
     # Resumo do DataFrame
     print("\n📋 Informações gerais:")
@@ -83,7 +87,7 @@ def cluster():
     # Tabela de clientes por cluster
     st.subheader('Tabela de Clientes e seus Clusters')
     tabela = gerar_tabela_clientes_clusters(df_clusters)
-    st.dataframe(tabela)
+    st.dataframe(data=tabela)
 
     # Seleção das variáveis numéricas para o gráfico
     colunas_numericas = ['VL_TOTAL_CONTRATO',
@@ -96,8 +100,9 @@ def cluster():
     fig = plotar_grafico_clusters(df_clusters, x_col, y_col)
     st.pyplot(fig)
 
-    # if __name__ == '__main__':
-    # cluster()
+
+def monitoramento():
+    st.title("Monitoramento")
 
 
 # Sidebar para navegação
@@ -107,8 +112,8 @@ st.sidebar.image(
 with st.sidebar:
     pagina_selecionada = option_menu(
         "Menu",  # Título do menu
-        ["Home", "Upload",
-            "Análise", "Clusterização"],  # Páginas
+        ["Home", "Formulário", "Upload",
+            "Análise", "Clusterização", "Monitoramento"],  # Páginas
         icons=["house", "info", "clipboard",
                "bar-chart", "gear"],  # Ícones (opcional)
         menu_icon="cast",  # Ícone do menu
@@ -118,9 +123,13 @@ with st.sidebar:
 # Exibir a página selecionada
 if pagina_selecionada == "Home":
     home()
+elif pagina_selecionada == "Formulário":
+    formulario()
 elif pagina_selecionada == "Upload":
     upload()
 elif pagina_selecionada == "Análise":
     analise()
 elif pagina_selecionada == "Clusterização":
     cluster()
+elif pagina_selecionada == "Monitoramento":
+    monitoramento()
