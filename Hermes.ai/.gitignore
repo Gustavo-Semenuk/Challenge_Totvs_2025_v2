@@ -2,3 +2,4 @@
 Hermes.ai/oracle_client/
 *.zip
 *.dll
+.env
