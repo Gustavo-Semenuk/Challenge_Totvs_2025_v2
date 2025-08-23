@@ -1,31 +1,40 @@
-import boto3
 import os
-from dotenv import load_dotenv
+import streamlit as st
+import pandas as pd
+from databricks import sql
+from databricks.sdk.core import Config
 
-# Carrega variáveis do .env (credenciais e configs)
-load_dotenv()
 
-# Cria o cliente do S3 usando boto3
-s3 = boto3.client(
-    's3',
-    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-    region_name=os.getenv("AWS_DEFAULT_REGION")
+# Configure o Databricks (use variáveis de ambiente para segurança)
+cfg = Config(
+    host="dbc-d3ad9dd2-0f96.cloud.databricks.com",
+    token=os.getenv("DATABRICKS_TOKEN")  # export DATABRICKS_TOKEN="seu_token"
 )
 
 
-def listar_arquivos(bucket_name):
-    """
-    Lista os arquivos no bucket S3
-    """
-    response = s3.list_objects_v2(Bucket=bucket_name)
-    arquivos = [obj['Key'] for obj in response.get('Contents', [])]
-    return arquivos
+@st.cache_resource  # conexão é cacheada
+def get_connection(http_path: str):
+    return sql.connect(
+        server_hostname=cfg.host,
+        http_path=http_path,
+        access_token=cfg.token
+    )
 
 
-def baixar_arquivo(bucket_name, file_key):
-    """
-    Baixa um arquivo específico do S3 e retorna como bytes
-    """
-    obj = s3.get_object(Bucket=bucket_name, Key=file_key)
-    return obj['Body'].read()
+def read_table(table_name: str, conn):
+    with conn.cursor() as cursor:
+        query = f"SELECT * FROM {table_name}"
+        cursor.execute(query)
+        return cursor.fetchall_arrow().to_pandas()
+
+
+# 🔹 Configure sua warehouse
+http_path_input = "/sql/1.0/warehouses/f1a172f76bf497d7"
+
+# 🔹 Nome da tabela
+table_name = "workspace.default.validation_totvs"
+
+if http_path_input and table_name:
+    conn = get_connection(http_path_input)
+    df = read_table(table_name, conn)
+    df
