@@ -23,7 +23,7 @@ def home():
         st.write("")
         col1, col2, col3 = st.columns([2, 10, 2])
         with col2:
-            st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\Home 1.png")
+            st.image("\imagens\Home 1.png")
             st.write("")
         st.markdown("<h3 style='text-align: center;'>Transforme seus dados em insights e "
                     "revolucione a jornada do seu cliente</h3>", unsafe_allow_html=True)
@@ -64,14 +64,14 @@ def home():
 
         col1, col2, col3 = st.columns([1, 30, 1])
         with col2:
-            st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\Home 2.png")
+            st.image("\imagens\Home 2.png")
 
         st.write(
             "Nossa plataforma de inteligência de dados foi criada para ajudar empresas como a sua a personalizar a jornada do cliente de forma única.")
 
         col1, col2, col3 = st.columns([1, 30, 1])
         with col2:
-            st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\Home 3.png")
+            st.image("\imagens\Home 3.png")
 
         st.write("Com a crescente na demanda e exigência dos clientes por uma experiência de excelência com as empresas que consomem,"
                  " é fundamental a utilização das mais novas tecnologias para poder acompanhar o mercado e seguir inovando e fidelizando os clientes.")
@@ -80,7 +80,7 @@ def home():
 
         col1, col2, col3 = st.columns([1, 30, 1])
         with col2:
-            st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\Home 4.png")
+            st.image("\imagens\Home 4.png")
 
     # Sub-Sobre Nos
 
@@ -105,7 +105,7 @@ def home():
                  " no qual temos como ponto em comum uma produtividade mais elevada em período noturnos do dia, que é o período que nos reunimos com maior frequência. "
                  "E daí veio o nome perfeito para o grupo, Os Corujões do SQL, um grupo de pessoas noturnas e facinadas pelo uso da linguagem SQL.")
         st.subheader("Os integrantes do nosso grupo:")
-        st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\integrantes do time.JPG",
+        st.image("\imagens\integrantes do time.JPG",
                  use_container_width=True)
 
     # Sub-Soluções
@@ -146,7 +146,7 @@ def home():
             pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
             st.markdown(pdf_display, unsafe_allow_html=True)
         mostrar_pdf(
-            "D:\Faculdade\Challenge_Totvs_2025\Arquivos\Escopo_Challenge_2025.pdf")
+            "\Arquivos\Escopo_Challenge_2025.pdf")
 
     # Sub-Contato
 
@@ -221,7 +221,7 @@ def IA():
 
 # Sidebar para navegação
 st.sidebar.image(
-    "D:\Faculdade\Challenge_Totvs_2025\imagens\logo_rain_of_changes.png", use_container_width=80)
+    "\imagens\logo_rain_of_changes.png", use_container_width=80)
 
 with st.sidebar:
     pagina_selecionada = option_menu(
