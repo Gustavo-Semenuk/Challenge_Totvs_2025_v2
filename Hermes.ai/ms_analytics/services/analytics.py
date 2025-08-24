@@ -5,7 +5,9 @@ import databricks.sql as sql
 # Configurações
 server_hostname = "dbc-d3ad9dd2-0f96.cloud.databricks.com"
 http_path = "/sql/1.0/warehouses/f1a172f76bf497d7"
-access_token = os.getenv("DATABRICKS_TOKEN")  # exporte seu token antes de rodar
+# exporte seu token antes de rodar
+access_token = os.getenv("DATABRICKS_TOKEN")
+
 
 def read_table(table_name: str):
     with sql.connect(
@@ -17,6 +19,7 @@ def read_table(table_name: str):
             query = f"SELECT * FROM {table_name}"
             cursor.execute(query)
             return cursor.fetchall_arrow().to_pandas()
+
 
 # Nome da tabela
 table_name = "workspace.default.validation_totvs"
