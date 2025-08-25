@@ -208,7 +208,7 @@ def cluster():
 
     col1, col2, col3 = st.columns([1, 30, 1])
     with col2:
-        st.image("imagens/clusterização 2.png", use_column_width=True)
+        st.image("imagens/clusterização 2.png", use_container_width=True)
 
 
 # Monitoramento
