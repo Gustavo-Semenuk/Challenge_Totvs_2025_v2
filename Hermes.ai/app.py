@@ -3,6 +3,9 @@ import streamlit.components.v1 as components
 from streamlit_option_menu import option_menu
 import requests
 import base64
+import matplotlib.pyplot as plt
+import seaborn as sns
+from services.kmeans import rodar_kmeans
 
 
 # Estrutura Home
@@ -181,6 +184,24 @@ def analise():
 
 def cluster():
     st.title('Clusterização')
+
+    # Número de clusters selecionável pelo usuário
+    n_clusters = st.slider("Número de clusters (k)", 2, 10, 3)
+
+    df, X_pca, labels = rodar_kmeans(n_clusters=n_clusters)
+
+    # ---- Tabela com clusters ----
+    st.subheader("Tabela de Clientes com Clusters")
+    st.dataframe(df[['CLIENTE', 'Cluster']])
+
+    # ---- Gráfico de dispersão ----
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1],
+                    hue=labels, palette="viridis", s=50)
+    plt.xlabel("Componente Principal 1")
+    plt.ylabel("Componente Principal 2")
+    plt.title("Distribuição dos Clusters (PCA 2D)")
+    st.pyplot(plt)
 
 # Monitoramento
 
