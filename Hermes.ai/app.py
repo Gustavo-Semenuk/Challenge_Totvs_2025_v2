@@ -4,7 +4,6 @@ from streamlit_option_menu import option_menu
 import requests
 import base64
 import matplotlib.pyplot as plt
-import seaborn as sns
 from services.kmeans import rodar_kmeans
 
 
@@ -196,8 +195,11 @@ def cluster():
 
     # ---- Gráfico de dispersão ----
     plt.figure(figsize=(8, 6))
-    sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1],
-                    hue=labels, palette="viridis", s=50)
+    plt.scatter(X_pca[:,0], X_pca[:,1], c=labels, cmap='viridis')
+    plt.xlabel("PCA 1")
+    plt.ylabel("PCA 2")
+    plt.title("Clusters")
+    plt.show()
     plt.xlabel("Componente Principal 1")
     plt.ylabel("Componente Principal 2")
     plt.title("Distribuição dos Clusters (PCA 2D)")
