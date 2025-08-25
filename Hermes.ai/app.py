@@ -183,32 +183,32 @@ def analise():
 
 
 def cluster():
-    #df = ler_tabela()
+    # df = ler_tabela()
 
     # Slider para escolher número de clusters
-    #n_clusters = st.slider("Número de clusters (k)", 2, 10, 3)
+    # n_clusters = st.slider("Número de clusters (k)", 2, 10, 3)
 
     # Rodar clusterização
-    #df_clusters, X_pca, labels = rodar_kmeans(df, n_clusters=n_clusters, sample_size=1000)
+    # df_clusters, X_pca, labels = rodar_kmeans(df, n_clusters=n_clusters, sample_size=1000)
 
     # Mostrar tabela
-    #st.subheader("Clientes com Clusters")
-    #st.dataframe(df_clusters[['CLIENTE', 'Cluster']])
+    # st.subheader("Clientes com Clusters")
+    # st.dataframe(df_clusters[['CLIENTE', 'Cluster']])
 
-    #pca = PCA(n_components=2)
-    #X_pca = pca.fit_transform(X_scaled)
+    # pca = PCA(n_components=2)
+    # X_pca = pca.fit_transform(X_scaled)
 
-    #plt.figure(figsize=(8,6))
-    #plt.scatter(X_pca[:,0], X_pca[:,1], c=labels, cmap='viridis', alpha=0.7)
-    #plt.xlabel("Componente Principal 1")
-    #plt.ylabel("Componente Principal 2")
-    #plt.title("Distribuição dos Clusters (PCA 2D)")
-    #plt.colorbar(label='Cluster')
-    #plt.show()
-    
+    # plt.figure(figsize=(8,6))
+    # plt.scatter(X_pca[:,0], X_pca[:,1], c=labels, cmap='viridis', alpha=0.7)
+    # plt.xlabel("Componente Principal 1")
+    # plt.ylabel("Componente Principal 2")
+    # plt.title("Distribuição dos Clusters (PCA 2D)")
+    # plt.colorbar(label='Cluster')
+    # plt.show()
+
     col1, col2, col3 = st.columns([1, 30, 1])
     with col2:
-        st.image("imagens/clusterização 2.png")
+        st.image("imagens/clusterizacao 2.png")
 
 
 # Monitoramento
