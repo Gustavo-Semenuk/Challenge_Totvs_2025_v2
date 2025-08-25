@@ -8,10 +8,8 @@ from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
 
 
-# Configurações P
 server_hostname = "dbc-d3ad9dd2-0f96.cloud.databricks.com"
 http_path = "/sql/1.0/warehouses/f1a172f76bf497d7"
-# exporte seu token antes de rodar (ex: export DATABRICKS_TOKEN=xxxxx)
 access_token = os.getenv("DATABRICKS_TOKEN")
 
 
@@ -35,8 +33,8 @@ df = read_table(table_name)
 
 df = df.head(10000)
 
-features = ['var_fat_faixa','var_segmento', 'var_subsegmento',
-            'var_marca_totvs','var_uf', 'var_situacao_contrato']
+features = ['var_fat_faixa', 'var_segmento', 'var_subsegmento',
+            'var_marca_totvs', 'var_uf', 'var_situacao_contrato']
 
 X = df[features]
 
@@ -44,7 +42,7 @@ X = df[features]
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# Rodando KMeans inicial (exemplo com 3 clusters)
+# KMeans
 kmeans = KMeans(n_clusters=3, random_state=42)
 labels = kmeans.fit_predict(X_scaled)
 df['Cluster'] = labels
@@ -60,16 +58,14 @@ for k in K:
     wcss.append(kmeans.inertia_)
     silhouette_scores.append(silhouette_score(X_scaled, labels))
 
-# ---- VISUALIZAÇÃO ----
-# Reduz para 2D com PCA para plotar
+# VISUALIZAÇÃO
 pca = PCA(n_components=2)
 X_pca = pca.fit_transform(X_scaled)
 
-plt.figure(figsize=(8,6))
-plt.scatter(X_pca[:,0], X_pca[:,1], c=labels, cmap='viridis', alpha=0.7)
+plt.figure(figsize=(8, 6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=labels, cmap='viridis', alpha=0.7)
 plt.xlabel("Componente Principal 1")
 plt.ylabel("Componente Principal 2")
 plt.title("Distribuição dos Clusters (PCA 2D)")
 plt.colorbar(label='Cluster')
 plt.show()
-
