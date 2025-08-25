@@ -4,8 +4,8 @@ from streamlit_option_menu import option_menu
 import requests
 import base64
 import matplotlib.pyplot as plt
-#from ms_clusterizacao_knn.services.algoritmo_kmeans import tabela
-#from ms_clusterizacao_knn.services.algoritmo_kmeans import rodar_kmeans
+# from ms_clusterizacao_knn.services.algoritmo_kmeans import tabela
+# from ms_clusterizacao_knn.services.algoritmo_kmeans import rodar_kmeans
 
 
 # Estrutura Home
@@ -208,7 +208,7 @@ def cluster():
 
     col1, col2, col3 = st.columns([1, 30, 1])
     with col2:
-        st.image("imagens/clusterização 2.png", use_container_width=True)
+        st.image("imagens/clusterizacao_2.png", use_container_width=True)
 
 
 # Monitoramento
