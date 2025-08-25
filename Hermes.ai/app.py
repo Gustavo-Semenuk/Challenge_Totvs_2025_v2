@@ -69,8 +69,7 @@ def home():
         with col2:
             st.image("imagens/Home 2.png")
 
-        st.write(
-            "Nossa plataforma de inteligência de dados foi criada para ajudar empresas como a sua a personalizar a jornada do cliente de forma única.")
+        st.write("Nossa plataforma de inteligência de dados foi criada para ajudar empresas como a sua a personalizar a jornada do cliente de forma única.")
 
         col1, col2, col3 = st.columns([1, 30, 1])
         with col2:
@@ -108,8 +107,7 @@ def home():
                  " no qual temos como ponto em comum uma produtividade mais elevada em período noturnos do dia, que é o período que nos reunimos com maior frequência. "
                  "E daí veio o nome perfeito para o grupo, Os Corujões do SQL, um grupo de pessoas noturnas e facinadas pelo uso da linguagem SQL.")
         st.subheader("Os integrantes do nosso grupo:")
-        st.image("imagens/integrantes do time.JPG",
-                 use_container_width=True)
+        st.image("imagens/integrantes do time.JPG", use_container_width=True)
 
     # Sub-Soluções
 
@@ -122,8 +120,7 @@ def home():
         st.write(
             "Dashboard para apresentação da análise descritiva/exploratória dos dados fornecidos pela Totvs.")
         st.write("Dashboard construído na ferramenta Power BI e incorporado a nossa plataforma para facilitar a visualização das informações e análises.")
-        st.write(
-            "A nossa análise tem o intuito de apresentar um resumo dos dados fornecidos e as análises realizadas em algumas variáveis.")
+        st.write("A nossa análise tem o intuito de apresentar um resumo dos dados fornecidos e as análises realizadas em algumas variáveis.")
         st.subheader("Clusterização")
         st.write("Local destinado a apresentação e utilização por parte do usuário aos nossos modelos de clusterização, sendo o primeiro modelo disponível o K-means")
         st.subheader("Hermes AI")
@@ -148,8 +145,7 @@ def home():
                 base64_pdf = base64.b64encode(f.read()).decode('utf-8')
             pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="600" type="application/pdf"></iframe>'
             st.markdown(pdf_display, unsafe_allow_html=True)
-        mostrar_pdf(
-            "Arquivos/Escopo_Challenge_2025.pdf")
+        mostrar_pdf("Arquivos/Escopo_Challenge_2025.pdf")
 
     # Sub-Contato
 
