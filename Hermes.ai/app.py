@@ -4,8 +4,8 @@ from streamlit_option_menu import option_menu
 import requests
 import base64
 import matplotlib.pyplot as plt
-from ms_clusterizacao_knn.services.algoritmo_kmeans import tabela
-from ms_clusterizacao_knn.services.algoritmo_kmeans import rodar_kmeans
+#from ms_clusterizacao_knn.services.algoritmo_kmeans import tabela
+#from ms_clusterizacao_knn.services.algoritmo_kmeans import rodar_kmeans
 
 
 # Estrutura Home
