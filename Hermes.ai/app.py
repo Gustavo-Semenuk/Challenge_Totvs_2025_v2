@@ -183,6 +183,8 @@ def analise():
 
 
 def cluster():
+
+    st.title("Clusterização")
     # df = ler_tabela()
 
     # Slider para escolher número de clusters
@@ -206,9 +208,7 @@ def cluster():
     # plt.colorbar(label='Cluster')
     # plt.show()
 
-    col1, col2, col3 = st.columns([1, 30, 1])
-    with col2:
-        st.image("imagens/clusterizacao_2.png", use_container_width=True)
+    st.image("imagens/clusterizacao_2.png", use_container_width=True)
 
 
 # Monitoramento
