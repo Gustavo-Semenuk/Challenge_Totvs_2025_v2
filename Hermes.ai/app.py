@@ -204,8 +204,7 @@ def cluster():
     # plt.colorbar(label='Cluster')
     # plt.show()
 
-    st.image("imagens/clusterizacao_2.png", use_container_width=True)
-
+    st.image("imagens/clusterizacao_2.jpg", use_container_width=True)
 
 # Monitoramento
 
