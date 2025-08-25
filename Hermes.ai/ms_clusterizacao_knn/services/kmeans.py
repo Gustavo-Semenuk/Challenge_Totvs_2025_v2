@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 
-def tabela(table_name="workspace.default.cluster_variaveis", n_clusters=3):
+def ler_tabela(table_name="workspace.default.cluster_variaveis", n_clusters=3):
     # Conexão Databricks
     server_hostname = "dbc-d3ad9dd2-0f96.cloud.databricks.com"
     http_path = "/sql/1.0/warehouses/f1a172f76bf497d7"
