@@ -55,12 +55,21 @@ silhouette_scores = []
 K = range(2, 11)
 
 for k in K:
-    #kmeans = KMeans(n_clusters=k, random_state=42)
-    kmeans = KMeans(n_clusters=4, n_init=5, max_iter=100, random_state=42)
+    kmeans = KMeans(n_clusters=k, random_state=42)
     labels = kmeans.fit_predict(X_scaled)
     wcss.append(kmeans.inertia_)
     silhouette_scores.append(silhouette_score(X_scaled, labels))
 
-# ---- TABELA CLIENTE X CLUSTER ----
-print("\nClientes e seus respectivos clusters:")
-print(df[['CLIENTE', 'Cluster']].head(20))  # mostra só os 20 primeiros
+# ---- VISUALIZAÇÃO ----
+# Reduz para 2D com PCA para plotar
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+plt.figure(figsize=(8,6))
+plt.scatter(X_pca[:,0], X_pca[:,1], c=labels, cmap='viridis', alpha=0.7)
+plt.xlabel("Componente Principal 1")
+plt.ylabel("Componente Principal 2")
+plt.title("Distribuição dos Clusters (PCA 2D)")
+plt.colorbar(label='Cluster')
+plt.show()
+
