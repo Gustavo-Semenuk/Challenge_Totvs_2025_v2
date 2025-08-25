@@ -8,7 +8,8 @@ from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
 
-def rodar_kmeans(table_name="workspace.default.cluster_variaveis", n_clusters=3):
+
+def tabela(table_name="workspace.default.cluster_variaveis", n_clusters=3):
     # Conexão Databricks
     server_hostname = "dbc-d3ad9dd2-0f96.cloud.databricks.com"
     http_path = "/sql/1.0/warehouses/f1a172f76bf497d7"
@@ -29,9 +30,20 @@ def rodar_kmeans(table_name="workspace.default.cluster_variaveis", n_clusters=3)
     # Leitura dos dados
     df = read_table(table_name)
 
-    # Seleção das features numéricas
-    features = ['var_fat_faixa', 'var_segmento', 'var_subsegmento',
-                'var_marca_totvs', 'var_uf', 'var_situacao_contrato']
+    
+
+def rodar_kmeans(df: pd.DataFrame, n_clusters=3, sample_size=None):
+    """
+    Recebe um DataFrame e retorna:
+    - df com a coluna 'Cluster'
+    - X_pca (redução 2D) para plot
+    - labels dos clusters
+    """
+
+    df = df.head(10000)
+
+    features = ['var_fat_faixa','var_segmento', 'var_subsegmento',
+                'var_marca_totvs','var_uf', 'var_situacao_contrato']
 
     X = df[features]
 
@@ -39,12 +51,12 @@ def rodar_kmeans(table_name="workspace.default.cluster_variaveis", n_clusters=3)
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    # Rodar KMeans
+    # KMeans
     kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     labels = kmeans.fit_predict(X_scaled)
     df['Cluster'] = labels
 
-    # PCA para visualização 2D
+    # PCA 2D para visualização
     pca = PCA(n_components=2)
     X_pca = pca.fit_transform(X_scaled)
 

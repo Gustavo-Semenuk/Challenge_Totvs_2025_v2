@@ -4,6 +4,7 @@ from streamlit_option_menu import option_menu
 import requests
 import base64
 import matplotlib.pyplot as plt
+from ms_clusterizacao_knn.services.algoritmo_kmeans import tabela
 from ms_clusterizacao_knn.services.algoritmo_kmeans import rodar_kmeans
 
 
@@ -182,28 +183,30 @@ def analise():
 
 
 def cluster():
-    st.title('Clusterização')
+    df = tabela
 
-    # Número de clusters selecionável pelo usuário
+    # Slider para escolher número de clusters
     n_clusters = st.slider("Número de clusters (k)", 2, 10, 3)
 
-    df, X_pca, labels = rodar_kmeans(n_clusters=n_clusters)
+    # Rodar clusterização
+    df_clusters, X_pca, labels = rodar_kmeans(
+        df, n_clusters=n_clusters, sample_size=1000)
 
-    # ---- Tabela com clusters ----
-    st.subheader("Tabela de Clientes com Clusters")
-    st.dataframe(df[['CLIENTE', 'Cluster']])
+    # ---- Tabela ----
+    st.subheader("Clientes com Clusters")
+    st.dataframe(df_clusters[['CLIENTE', 'Cluster']])
 
-    # ---- Gráfico de dispersão ----
+    # ---- Gráfico PCA 2D ----
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X_scaled)
+
     plt.figure(figsize=(8, 6))
-    plt.scatter(X_pca[:,0], X_pca[:,1], c=labels, cmap='viridis')
-    plt.xlabel("PCA 1")
-    plt.ylabel("PCA 2")
-    plt.title("Clusters")
-    plt.show()
+    plt.scatter(X_pca[:, 0], X_pca[:, 1], c=labels, cmap='viridis', alpha=0.7)
     plt.xlabel("Componente Principal 1")
     plt.ylabel("Componente Principal 2")
     plt.title("Distribuição dos Clusters (PCA 2D)")
-    st.pyplot(plt)
+    plt.colorbar(label='Cluster')
+    plt.show()
 
 # Monitoramento
 

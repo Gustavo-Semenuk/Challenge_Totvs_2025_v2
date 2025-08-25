@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import databricks.sql as sql
 from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
@@ -31,7 +32,8 @@ def read_table(table_name: str) -> pd.DataFrame:
 table_name = "workspace.default.cluster_variaveis"
 
 df = read_table(table_name)
-print(df.head())
+
+df = df.head(7000)
 
 features = ['var_fat_faixa','var_segmento', 'var_subsegmento',
             'var_marca_totvs','var_uf', 'var_situacao_contrato']
