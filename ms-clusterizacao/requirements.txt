@@ -1,0 +1,11 @@
+# Databricks
+databricks-sdk
+databricks-sql-connector
+databricks.sql
+
+# Data Science
+pandas
+numpy
+
+# Machine Learning
+scikit-learn
