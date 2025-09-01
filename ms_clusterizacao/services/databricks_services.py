@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-import databricks.sql as sql
+from databricks import sql
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -35,7 +35,7 @@ class DatabricksService:
 
 
 class ClusterDataService:
-    def __init__(self, data_path="cluster_variaveis.parquet"):
+    def __init__(self, data_path="ms_clusterizacao/input_data/cluster_variaveis.parquet"):
         self.data_path = data_path
         self.df = None
         self.db_service = DatabricksService()  # instância do serviço Databricks

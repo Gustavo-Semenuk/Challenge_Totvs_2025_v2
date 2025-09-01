@@ -1,37 +1,15 @@
-import os
 import pandas as pd
-import databricks.sql as sql
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
+import os
+from ms_clusterizacao.services.databricks_services import ClusterDataService
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
+from sklearn.decomposition import PCA
 
 
-server_hostname = "dbc-d3ad9dd2-0f96.cloud.databricks.com"
-http_path = "/sql/1.0/warehouses/f1a172f76bf497d7"
-access_token = os.getenv("DATABRICKS_TOKEN")
-
-
-def read_table(table_name: str) -> pd.DataFrame:
-    with sql.connect(
-        server_hostname=server_hostname,
-        http_path=http_path,
-        access_token=access_token
-    ) as conn:
-        with conn.cursor() as cursor:
-            query = f"SELECT * FROM {table_name}"
-            cursor.execute(query)
-            # retorna direto um DataFrame pandas
-            return cursor.fetchall_arrow().to_pandas()
-
-
-# Nome da tabela
-table_name = "workspace.default.cluster_variaveis"
-
-df = read_table(table_name)
-
-df = df.head(10000)
+cluster_service = ClusterDataService()
+df = cluster_service.get_data().head(10000)  # carrega do parquet ou Databricks se não existir
 
 features = ['var_fat_faixa', 'var_segmento', 'var_subsegmento',
             'var_marca_totvs', 'var_uf', 'var_situacao_contrato']
@@ -50,7 +28,7 @@ df['Cluster'] = labels
 # Determinação do melhor k (Cotovelo + Silhueta)
 wcss = []
 silhouette_scores = []
-K = range(2, 11)
+K = range(3, 5)
 
 for k in K:
     kmeans = KMeans(n_clusters=k, random_state=42)

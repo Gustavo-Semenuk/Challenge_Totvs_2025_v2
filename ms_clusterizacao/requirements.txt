@@ -1,6 +1,4 @@
 # Databricks
-databricks-sdk
-databricks-sql-connector
 databricks.sql
 
 # Data Science
