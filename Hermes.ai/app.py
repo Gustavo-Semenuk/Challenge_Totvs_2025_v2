@@ -177,30 +177,45 @@ def analise():
 def cluster():
 
     st.title("Clusterização")
-    # df = ler_tabela()
 
-    # Slider para escolher número de clusters
-    # n_clusters = st.slider("Número de clusters (k)", 2, 10, 3)
+    abas = st.tabs(["🤖Chat AI","🎲 Tabela", "💡 Clusters", "💻 Grafos"])
 
-    # Rodar clusterização
-    # df_clusters, X_pca, labels = rodar_kmeans(df, n_clusters=n_clusters, sample_size=1000)
+    with abas[0]:
+        st.header("Chat AI")
 
-    # Mostrar tabela
-    # st.subheader("Clientes com Clusters")
-    # st.dataframe(df_clusters[['CLIENTE', 'Cluster']])
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
 
-    # pca = PCA(n_components=2)
-    # X_pca = pca.fit_transform(X_scaled)
+        # Mostra o histórico do chat
+        for msg in st.session_state.messages:
+            st.chat_message(msg["role"]).markdown(msg["content"])
 
-    # plt.figure(figsize=(8,6))
-    # plt.scatter(X_pca[:,0], X_pca[:,1], c=labels, cmap='viridis', alpha=0.7)
-    # plt.xlabel("Componente Principal 1")
-    # plt.ylabel("Componente Principal 2")
-    # plt.title("Distribuição dos Clusters (PCA 2D)")
-    # plt.colorbar(label='Cluster')
-    # plt.show()
+        # Input do usuário
+        user_input = st.chat_input("Digite sua pergunta")
 
-    st.image("imagens/clusterizacao_10.png", use_container_width=True)
+        if user_input:
+            # Armazena e exibe a mensagem do usuário
+            st.session_state.messages.append(
+                {"role": "user", "content": user_input})
+            st.chat_message("user").markdown(user_input)
+
+            # Obtém resposta do agente RAG
+            with st.spinner("Consultando base de conhecimento..."):
+                response = chat_rag_response(user_input)["response"]
+
+            # Armazena e exibe a resposta do bot
+            st.session_state.messages.append(
+                {"role": "assistant", "content": response})
+            st.chat_message("assistant").markdown(response)
+
+    with abas[1]:
+        st.header("Tabela")
+
+    with abas[2]:
+        st.header("Clusters")
+
+    with abas[3]:
+        st.header("Grafos")
 
 # Monitoramento
 
@@ -225,18 +240,31 @@ def monitoramento():
 
 def IA():
     st.title("Hermes AI")
-    # Placeholder para o loading
-    loading_placeholder = st.empty()
 
-    # Mostra mensagem de loading
-    loading_placeholder.markdown(
-        """
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh;">
-            <h1>🔄 Loading...</h1>
-            <p>Feature em construção</p>
-        </div>
-        """, unsafe_allow_html=True
-    )
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+
+    # Mostra o histórico do chat
+    for msg in st.session_state.messages:
+        st.chat_message(msg["role"]).markdown(msg["content"])
+
+    # Input do usuário
+    user_input = st.chat_input("Digite sua pergunta")
+
+    if user_input:
+        # Armazena e exibe a mensagem do usuário
+        st.session_state.messages.append(
+            {"role": "user", "content": user_input})
+        st.chat_message("user").markdown(user_input)
+
+        # Obtém resposta do agente RAG
+        with st.spinner("Consultando base de conhecimento..."):
+            response = chat_rag_response(user_input)["response"]
+
+        # Armazena e exibe a resposta do bot
+        st.session_state.messages.append(
+            {"role": "assistant", "content": response})
+        st.chat_message("assistant").markdown(response)
 
 
 # Sidebar para navegação
