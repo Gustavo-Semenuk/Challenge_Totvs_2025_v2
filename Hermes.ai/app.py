@@ -3,6 +3,11 @@ import streamlit.components.v1 as components
 from streamlit_option_menu import option_menu
 import requests
 import base64
+import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
+from ms_clusterizacao.services.databricks_services import ClusterDataService
+from ms_clusterizacao.services.llm_services import escolher_cluster
 
 # Estrutura Home
 
@@ -120,7 +125,6 @@ def home():
         st.subheader("Clusterização")
         st.write("Local destinado a apresentação e utilização por parte do usuário aos nossos modelos de clusterização, sendo o primeiro modelo disponível o K-means")
         st.subheader("Hermes AI")
-        st.write("Feature em construção...")
         st.write("Chat AI com interface interativa para que o usuário consiga extrair insights dos resultados da clusterização e demais informações geradas pela solução.")
         st.subheader("Monitoramento")
         st.write("Feature em construção...")
@@ -178,44 +182,95 @@ def cluster():
 
     st.title("Clusterização")
 
-    abas = st.tabs(["🤖Chat AI","🎲 Tabela", "💡 Clusters", "💻 Grafos"])
+    abas = st.tabs(["🎲 Tabela", "💡 Clusters", "💻 Grafos"])
 
     with abas[0]:
-        st.header("Chat AI")
-
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
-
-        # Mostra o histórico do chat
-        for msg in st.session_state.messages:
-            st.chat_message(msg["role"]).markdown(msg["content"])
-
-        # Input do usuário
-        user_input = st.chat_input("Digite sua pergunta")
-
-        if user_input:
-            # Armazena e exibe a mensagem do usuário
-            st.session_state.messages.append(
-                {"role": "user", "content": user_input})
-            st.chat_message("user").markdown(user_input)
-
-            # Obtém resposta do agente RAG
-            with st.spinner("Consultando base de conhecimento..."):
-                response = chat_rag_response(user_input)["response"]
-
-            # Armazena e exibe a resposta do bot
-            st.session_state.messages.append(
-                {"role": "assistant", "content": response})
-            st.chat_message("assistant").markdown(response)
-
-    with abas[1]:
         st.header("Tabela")
 
-    with abas[2]:
+        df = pd.read_csv("D:\Faculdade\Challenge_Totvs_2025\Hermes.ai\Arquivos\Análise_dos_Dados_Totvs.csv")
+        st.dataframe(df)
+
+    with abas[1]:
         st.header("Clusters")
 
-    with abas[3]:
+       # st.image("imagens/clusterizacao_01.png", use_container_width=True)
+        st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\clusterizacao_01.png", use_container_width=True)
+        
+    with abas[2]:
+
         st.header("Grafos")
+
+        df = pd.read_csv("D:\Faculdade\Challenge_Totvs_2025\Hermes.ai\Arquivos\Base_grafos.csv")
+
+        df = df.head(1000)
+
+        cluster_colors = {
+        0: 'red',
+        1: 'green',
+        2: 'blue'
+        }
+
+        # 1. Início da criação do grafo
+        fig, ax = plt.subplots(figsize=(12, 10))
+
+        G = nx.Graph()
+
+        for index, row in df.iterrows():
+            G.add_node(row['CD_Cliente'],
+                    pos=(row['x'], row['y']),
+                    cluster=row['cluster'])
+
+        for cluster_id in df['cluster'].unique():
+            cluster_nodes = df[df['cluster'] == cluster_id]['CD_Cliente'].tolist()
+            for i in range(len(cluster_nodes)):
+                for j in range(i + 1, len(cluster_nodes)):
+                    G.add_edge(cluster_nodes[i], cluster_nodes[j])
+
+        # 2. Configuração do layout e cores
+
+        pos = {node: G.nodes[node]['pos'] for node in G.nodes()}
+
+        node_colors = [cluster_colors[G.nodes[node]['cluster']] for node in G.nodes()]
+
+        # 3. Desenho do grafo
+
+        nx.draw_networkx_nodes(G, pos, ax=ax, node_size=100, node_color=node_colors, alpha=0.5)
+        nx.draw_networkx_edges(G, pos, ax=ax, edge_color='gray', alpha=0.3)
+
+        handles = [plt.Line2D([], [], marker='o', color='white', markerfacecolor=cluster_colors[c], 
+                            markersize=10, label=f'Cluster {c}') for c in cluster_colors]
+
+        ax.legend(title="Clusters", handles=handles)
+        ax.set_title("Visualização de Clientes em Clusters K-means (Grafo)")
+        ax.set_xlabel("Variável X")
+        ax.set_ylabel("Variável Y")
+
+        # 4. Exibição do grafo no Streamlit
+        st.pyplot(fig)
+
+        fig, ax = plt.subplots(figsize=(10, 8))
+
+        # Iterar sobre cada cluster para plotar os pontos separadamente
+        for cluster_id, color in cluster_colors.items():
+            # Filtrar os dados para o cluster atual
+            cluster_data = df[df['cluster'] == cluster_id]
+            
+            # Plotar os pontos
+            ax.scatter(cluster_data['x'], cluster_data['y'], 
+                    color=color, 
+                    s=50, # Tamanho do ponto
+                    label=f'Cluster {cluster_id}',
+                    alpha=0.8) # Transparência
+
+        # Adicionar a legenda, título e rótulos
+        ax.legend(title="Clusters")
+        ax.set_title("Visualização de Clusters K-means (Gráfico de Dispersão)")
+        ax.set_xlabel("Variável X")
+        ax.set_ylabel("Variável Y")
+        ax.grid(True) # Adicionar grade para melhor visualização
+
+        # Exibir o gráfico no Streamlit
+        st.pyplot(fig)
 
 # Monitoramento
 
@@ -241,30 +296,46 @@ def monitoramento():
 def IA():
     st.title("Hermes AI")
 
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+    abas = st.tabs(["🤖Hermes AI", "🎲 Tabela", "💡 Clusters"])
 
-    # Mostra o histórico do chat
-    for msg in st.session_state.messages:
-        st.chat_message(msg["role"]).markdown(msg["content"])
+    with abas[0]:
+        st.header("Chat AI")
 
-    # Input do usuário
-    user_input = st.chat_input("Digite sua pergunta")
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
 
-    if user_input:
-        # Armazena e exibe a mensagem do usuário
-        st.session_state.messages.append(
-            {"role": "user", "content": user_input})
-        st.chat_message("user").markdown(user_input)
+        for msg in st.session_state.messages:
+            st.chat_message(msg["role"]).markdown(msg["content"])
 
-        # Obtém resposta do agente RAG
-        with st.spinner("Consultando base de conhecimento..."):
-            response = chat_rag_response(user_input)["response"]
+        user_input = st.chat_input("Digite sua pergunta")
 
-        # Armazena e exibe a resposta do bot
-        st.session_state.messages.append(
-            {"role": "assistant", "content": response})
-        st.chat_message("assistant").markdown(response)
+        if user_input:
+            st.session_state.messages.append(
+                {"role": "user", "content": user_input})
+            st.chat_message("user").markdown(user_input)
+
+            with st.spinner("Consultando base de conhecimento..."):
+                cluster_id = escolher_cluster(user_input)
+
+                cds = ClusterDataService()
+                df_cluster = cds.get_cluster_data(cluster_id)
+
+            st.session_state.messages.append(
+                {"role": "assistant",
+                    "content": f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados"}
+            )
+            st.chat_message("assistant").markdown(
+                f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados")
+
+ 
+            st.dataframe(df_cluster.head(10))
+
+    with abas[1]:
+        st.header("Tabela")
+
+    with abas[2]:
+        st.header("Clusters")
+
 
 
 # Sidebar para navegação
