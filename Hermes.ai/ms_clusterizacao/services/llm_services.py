@@ -3,8 +3,9 @@ import requests
 import pandas as pd
 from ms_clusterizacao.services.databricks_services import ClusterDataService
 
-OLLAMA_URL = "http://54.207.57.9:11434/v1/completions"
+OLLAMA_URL = "http://54.233.85.14:11434/v1/completions"
 MODEL_NAME = "llama3:latest"
+
 
 def escolher_cluster(user_input: str) -> dict:
     cluster_service = ClusterDataService()
