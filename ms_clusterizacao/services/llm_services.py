@@ -1,1 +1,0 @@
-# LLM do chat ai, responsavel por escolher qual modelo de clusterização irá apresentar de acordo com o víes desejado

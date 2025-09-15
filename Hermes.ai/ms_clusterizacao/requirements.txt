@@ -7,5 +7,3 @@ numpy
 
 # Machine Learning
 scikit-learn
-
-networkx
