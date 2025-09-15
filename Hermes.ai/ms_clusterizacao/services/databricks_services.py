@@ -37,13 +37,12 @@ class DatabricksService:
 
 class ClusterDataService:
     def __init__(self):
-        self.base_path = Path("ms_clusterizacao/arquivo_parquet")
+        catalog_path = "Hermes.ai/ms_clusterizacao/arquivo_parquet/catalog.parquet"
 
     def get_catalog(self) -> pd.DataFrame:
         """
         Lê o arquivo parquet local com o catálogo de clusters
         """
-        catalog_path = "Hermes.ai/ms_clusterizacao/arquivo_parquet/catalog.parquet"
         return pd.read_parquet(catalog_path)
 
     def get_cluster_data(self, cluster_id: str) -> pd.DataFrame:

@@ -43,7 +43,7 @@ Responda SOMENTE com o 'cluster_id' do cluster mais adequado.
 
     match = catalog_df[catalog_df["cluster_id"].astype(str) == cluster_id]
     if match.empty:
-        match = catalog_df[catalog_df["cluster_id"] == 0]
+        match = catalog_df[catalog_df["cluster_id"] == 1]
 
     return match.to_dict(orient="records")[0]
 
