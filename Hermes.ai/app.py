@@ -192,25 +192,8 @@ def cluster():
     with abas[1]:
         st.header("Clusters")
 
-        st.image("Hermes.ai/imagens/clusterizacao_01.png", use_container_width=True)
-
-# Monitoramento
-
-
-def monitoramento():
-    st.title("Monitoramento")
-    # Placeholder para o loading
-    loading_placeholder = st.empty()
-
-    # Mostra mensagem de loading
-    loading_placeholder.markdown(
-        """
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh;">
-            <h1>🔄 Loading...</h1>
-            <p>Feature em construção</p>
-        </div>
-        """, unsafe_allow_html=True
-    )
+        st.image("Hermes.ai/imagens/clusterizacao_01.png",
+                 use_container_width=True)
 
 # Inteligência Artificial
 
@@ -266,9 +249,9 @@ with st.sidebar:
     pagina_selecionada = option_menu(
         "Menu",  # Título do menu
         ["Home",
-            "Análise", "Clusterização", "Hermes AI", "Monitoramento"],  # Páginas
+            "Análise", "Clusterização", "Hermes AI"],  # Páginas
         icons=["house", "bar-chart", "bi-diagram-3",
-               "bi-robot", "bi-bar-chart"],  # Ícones
+               "bi-robot"],  # Ícones
         menu_icon="cast",  # Ícone do menu
         default_index=0,  # Índice da página inicial
     )
@@ -282,5 +265,3 @@ elif pagina_selecionada == "Clusterização":
     cluster()
 elif pagina_selecionada == "Hermes AI":
     IA()
-elif pagina_selecionada == "Monitoramento":
-    monitoramento()
