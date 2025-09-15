@@ -11,14 +11,11 @@ def escolher_cluster(user_input: str) -> dict:
     Recebe a descrição do usuário e retorna o cluster escolhido pelo LLM
     com base na coluna 'descricao' do catálogo.
     """
-    # 1️⃣ Carrega catálogo e garante que os dados de cada cluster estão salvos localmente
     cluster_service = ClusterDataService()
     catalog_df: pd.DataFrame = cluster_service.get_catalog()
 
-    # Apenas colunas relevantes para o LLM
     clusters_json = catalog_df[["cluster_id", "descricao"]].to_dict(orient="records")
 
-    # 2️⃣ Monta o prompt para o LLM
     prompt = f"""
 Você é um assistente de clusterização que traduz a descrição do usuário para o cluster mais adequado.
 Caso não ache nada similar, escolha o cluster_1 (cluster_id = 0), que é genérico.
@@ -31,8 +28,6 @@ Clusters disponíveis e suas descrições:
 
 Responda SOMENTE com o 'cluster_id' do cluster mais adequado.
 """
-
-    # 3️⃣ Chama a API do Ollama
     payload = {
         "model": MODEL_NAME,
         "prompt": prompt,
@@ -43,14 +38,11 @@ Responda SOMENTE com o 'cluster_id' do cluster mais adequado.
     response.raise_for_status()
     data = response.json()
 
-    # Dependendo da versão do Ollama, a chave pode ser "completion" ou "choices"
     text = data.get("completion") or data["choices"][0]["text"]
     cluster_id = text.strip()
 
-    # 4️⃣ Retorna o registro completo do cluster escolhido
     match = catalog_df[catalog_df["cluster_id"].astype(str) == cluster_id]
     if match.empty:
-        # Se o LLM não encontrar, retorna o genérico
         match = catalog_df[catalog_df["cluster_id"] == 0]
 
     return match.to_dict(orient="records")[0]

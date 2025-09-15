@@ -7,6 +7,7 @@ from pathlib import Path
 
 load_dotenv()
 
+
 class DatabricksService:
     def __init__(self):
         server = os.getenv("SERVER_HOSTNAME")
@@ -14,7 +15,8 @@ class DatabricksService:
         token = os.getenv("DATABRICKS_TOKEN")
 
         if not all([server, path, token]):
-            raise ValueError("As variáveis SERVER_HOSTNAME, HTTP_PATH e DATABRICKS_TOKEN devem estar definidas!")
+            raise ValueError(
+                "As variáveis SERVER_HOSTNAME, HTTP_PATH e DATABRICKS_TOKEN devem estar definidas!")
 
         self.conn = sql.connect(
             server_hostname=server,
@@ -35,7 +37,6 @@ class DatabricksService:
 
 class ClusterDataService:
     def __init__(self):
-        # pasta onde você salva os parquet, por exemplo:
         self.base_path = Path("ms_clusterizacao/arquivo_parquet")
 
     def get_catalog(self) -> pd.DataFrame:
