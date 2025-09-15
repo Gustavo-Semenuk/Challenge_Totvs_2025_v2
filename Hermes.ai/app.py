@@ -220,10 +220,11 @@ def IA():
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
-                cluster_id = escolher_cluster(user_input)
 
-                cds = ClusterDataService()
+                cluster = escolher_cluster(user_input)
+                cluster_id = cluster["cluster_id"]
                 df_cluster = cds.get_cluster_data(cluster_id)
+                cds = ClusterDataService()
 
             st.session_state.messages.append(
                 {"role": "assistant",
