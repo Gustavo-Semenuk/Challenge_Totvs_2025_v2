@@ -38,7 +38,7 @@ class ClusterDataService:
     def __init__(self):
         base_dir = os.path.dirname(__file__)  # caminho da pasta atual (services)
         # se o arquivo está em Hermes.ai/ms_clusterizacao/cluster_catalog.parquet
-        self.catalog_path = os.path.join(base_dir, "..", "cluster_catalog.parquet")
+        self.catalog_path = os.path.join(base_dir, "..","arquivo_parquet" ,"cluster_catalog.parquet")
 
     def get_catalog(self) -> pd.DataFrame:
         return pd.read_parquet(self.catalog_path)
