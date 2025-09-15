@@ -187,15 +187,14 @@ def cluster():
         st.header("Tabela")
 
         df = pd.read_csv(
-            "D:\Faculdade\Challenge_Totvs_2025\Hermes.ai\Arquivos\Análise_dos_Dados_Totvs.csv")
+            "Hermes.ai\Arquivos\Análise_dos_Dados_Totvs.csv")
         st.dataframe(df)
 
     with abas[1]:
         st.header("Clusters")
 
-       # st.image("imagens/clusterizacao_01.png", use_container_width=True)
-        st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\clusterizacao_01.png",
-                 use_container_width=True)
+        st.image("imagens/clusterizacao_01.png", use_container_width=True)
+        # st.image("D:\Faculdade\Challenge_Totvs_2025\imagens\clusterizacao_01.png",use_container_width=True)
 
 # Monitoramento
 
