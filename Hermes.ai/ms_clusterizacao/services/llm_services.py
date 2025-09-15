@@ -7,12 +7,8 @@ OLLAMA_URL = "http://localhost:11434/v1/completions"
 MODEL_NAME = "llama3:latest"
 
 def escolher_cluster(user_input: str) -> dict:
-    """
-    Recebe a descrição do usuário e retorna o cluster escolhido pelo LLM
-    com base na coluna 'descricao' do catálogo.
-    """
     cluster_service = ClusterDataService()
-    catalog_df: pd.DataFrame = cluster_service.get_catalog()
+    catalog_df = cluster_service.get_catalog()
 
     clusters_json = catalog_df[["cluster_id", "descricao"]].to_dict(orient="records")
 
@@ -28,30 +24,21 @@ Clusters disponíveis e suas descrições:
 
 Responda SOMENTE com o 'cluster_id' do cluster mais adequado.
 """
-    payload = {
-        "model": MODEL_NAME,
-        "prompt": prompt,
-        "temperature": 0
-    }
-
+    payload = {"model": MODEL_NAME, "prompt": prompt, "temperature": 0}
     response = requests.post(OLLAMA_URL, json=payload)
     response.raise_for_status()
     data = response.json()
 
     text = data.get("completion") or data["choices"][0]["text"]
-    cluster_id = text.strip()
+    cluster_id = text.strip().replace("\n", "")
 
     match = catalog_df[catalog_df["cluster_id"].astype(str) == cluster_id]
     if match.empty:
-        match = catalog_df[catalog_df["cluster_id"] == 1]
+        match = catalog_df[catalog_df["cluster_id"] == 0] 
 
     return match.to_dict(orient="records")[0]
 
 
 def obter_dados_cluster(cluster_id: str) -> pd.DataFrame:
-    """
-    Busca os dados do cluster escolhido a partir dos arquivos Parquet locais.
-    """
     cluster_service = ClusterDataService()
-    df = cluster_service.get_cluster_data(cluster_id)
-    return df
+    return cluster_service.get_cluster_data(cluster_id)  
