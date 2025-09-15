@@ -1,0 +1,15 @@
+.env
+tokens.txt
+dapi6146b7016578840ae9fb6c6e3737bc20
+repo-clean.git
+# Ignorar ambientes virtuais
+venv/
+*/venv/
+
+# Ignorar arquivos parquet
+*.parquet
+bfg*.jar
+
+DATABRICKS_TOKEN
+SERVER_HOSTNAME
+HTTP_PATH
