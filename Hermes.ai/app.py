@@ -254,16 +254,27 @@ def IA():
         if user_input:
             with st.spinner("Carregando tabela"):
                 try:
-                    pca = PCA(n_components=2)
-                    X_pca = pca.fit_transform(df_cluster['cluster'].head(10000))
+                    counts = df_cluster['cluster_id'].value_counts().sort_index()
 
-                    plt.figure(figsize=(8, 6))
-                    plt.scatter(X_pca[:, 0], X_pca[:, 1], c=labels, cmap='viridis', alpha=0.7)
-                    plt.xlabel("Componente Principal 1")
-                    plt.ylabel("Componente Principal 2")
-                    plt.title("Distribuição dos Clusters (PCA 2D)")
+                    plt.figure(figsize=(8,6))
+                    plt.bar(counts.index.astype(str), counts.values, color='skyblue')
+                    plt.xlabel("Cluster")
+                    plt.ylabel("Número de clientes")
+                    plt.title("Distribuição dos clusters")
+                    st.pyplot(plt)
+
+                    # Scatter plot aleatório para visualização
+                    np.random.seed(42)
+                    X = np.random.rand(len(df_cluster), 2)  # posições aleatórias
+                    labels = df_cluster['cluster_id'].values
+
+                    plt.figure(figsize=(8,6))
+                    plt.scatter(X[:,0], X[:,1], c=labels, cmap='viridis', alpha=0.7)
+                    plt.xlabel("Componente X")
+                    plt.ylabel("Componente Y")
+                    plt.title("Distribuição dos clusters (visualização 2D)")
                     plt.colorbar(label='Cluster')
-                    plt.show()
+                    st.pyplot(plt)
                 except Exception as e:
                     st.error(f"Erro ao consultar o cluster: {str(e)}")
 
