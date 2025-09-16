@@ -9,7 +9,7 @@ import base64
 import pandas as pd
 import matplotlib.pyplot as plt
 from ms_clusterizacao.services.databricks_services import ClusterDataService
-from ms_clusterizacao.services.llm_services import escolher_cluster, obter_dados_cluster_por_nome
+from ms_clusterizacao.services.llm_services import escolher_cluster, obter_dados_cluster_por_nome, responder_pergunta_cluster
 
 # Estrutura Home
 
@@ -204,7 +204,7 @@ def cluster():
 def IA():
     st.title("Hermes AI")
 
-    abas = st.tabs(["🤖Hermes AI", "🎲 Tabela", "💡 Clusters"])
+    abas = st.tabs(["🤖 Hermes AI", "🎲 Tabela", "💡 Clusters"])
 
     with abas[0]:
         st.header("Chat AI")
@@ -219,27 +219,44 @@ def IA():
 
         if user_input:
             st.session_state.messages.append(
-                {"role": "user", "content": user_input})
+                {"role": "user", "content": user_input}
+            )
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
                 try:
-                    # LLM escolhe o nome do cluster
-                    nome_cluster = escolher_cluster(user_input)
-                    df_cluster = obter_dados_cluster_por_nome(nome_cluster)
 
-                    st.session_state.messages.append({
-                        "role": "assistant",
-                        "content": f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
-                    })
-                    st.chat_message("assistant").markdown(
-                        f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
+                    resultado = escolher_cluster(user_input)
+                    cluster_id = resultado["cluster_id"]
+                    justificativa = resultado["justificativa"]
+
+                    # Busca dados do cluster escolhido
+                    df_cluster = obter_dados_cluster(cluster_id)
+
+                    # Resposta inicial
+                    msg = (
+                        f"Cluster escolhido: {cluster_id}  \n"
+                        f"{len(df_cluster)} registros carregados.  \n"
+                        f"Justificativa: {justificativa}"
                     )
+                    st.session_state.messages.append(
+                        {"role": "assistant", "content": msg}
+                    )
+                    st.chat_message("assistant").markdown(msg)
 
                     st.dataframe(df_cluster.head(10))
 
+                    # Para o user fazer perguntas adicionais sobre o cluster escolhido
+                    pergunta = st.text_input(
+                        "Gostaria de saber algo sobre este cluster?"
+                    )
+                    if pergunta:
+                        resposta = responder_pergunta_cluster(
+                            cluster_id, pergunta)
+                        st.write(resposta)
+
                 except Exception as e:
-                    st.error(f"Erro ao consultar o cluster: {str(e)}")
+                    st.error(f"Erro ao consultar o cluster: {e}")
 
     with abas[1]:
         st.header("Tabela")
