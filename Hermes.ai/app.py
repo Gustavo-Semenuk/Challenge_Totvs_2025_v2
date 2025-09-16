@@ -254,7 +254,7 @@ def IA():
         if user_input:
             with st.spinner("Carregando tabela"):
                 try:
-                    counts = df_cluster['cluster_id'].value_counts().sort_index()
+                    counts = df_cluster['CD_Cliente'].value_counts().sort_index()
 
                     plt.figure(figsize=(8,6))
                     plt.bar(counts.index.astype(str), counts.values, color='skyblue')
