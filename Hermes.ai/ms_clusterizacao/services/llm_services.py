@@ -33,7 +33,7 @@ Usuário descreveu:
 Clusters disponíveis e suas descrições:
 {json.dumps(clusters_json, ensure_ascii=False)}
 
-Responda SOMENTE com o 'nome' do cluster mais adequado.
+Responda SOMENTE com o 'nome' do cluster mais adequado e o porque escolheu ele.
 """
 
     payload = {"model": MODEL_NAME, "prompt": prompt, "temperature": 0}
