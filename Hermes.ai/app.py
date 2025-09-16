@@ -1,6 +1,9 @@
 import streamlit as st
 import streamlit.components.v1 as components
 from streamlit_option_menu import option_menu
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 import requests
 import base64
 import pandas as pd
