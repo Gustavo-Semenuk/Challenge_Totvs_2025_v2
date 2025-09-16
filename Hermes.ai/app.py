@@ -240,8 +240,11 @@ def IA():
     with abas[1]:
         st.header("Tabela")
 
+        st.dataframe(df_cluster.head(10000))
+
     with abas[2]:
         st.header("Clusters")
+
 
 
 # Sidebar para navegação
