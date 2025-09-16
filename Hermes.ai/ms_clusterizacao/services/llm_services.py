@@ -6,12 +6,15 @@ import requests
 # Configurações
 OLLAMA_URL = "http://54.233.85.14:11434/v1/completions"
 MODEL_NAME = "llama3:latest"
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # pasta atual do llm_services.py
-CATALOG_PATH = os.path.join(BASE_DIR, "..", "arquivo_parquet", "cluster_catalog.parquet")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PASTA_ARQUIVOS = os.path.join(BASE_DIR, "..", "arquivo_parquet")
 
 # Função para obter dados do cluster pelo nome
+
+
 def obter_dados_cluster_por_nome(nome_cluster: str) -> pd.DataFrame:
-    arquivos = [f for f in os.listdir(PASTA_ARQUIVOS) if f.endswith(".parquet")]
+    arquivos = [f for f in os.listdir(
+        PASTA_ARQUIVOS) if f.endswith(".parquet")]
 
     for arquivo in arquivos:
         path = os.path.join(PASTA_ARQUIVOS, arquivo)
@@ -27,7 +30,8 @@ def obter_dados_cluster_por_nome(nome_cluster: str) -> pd.DataFrame:
 # Função para escolher o cluster
 def escolher_cluster(user_input: str) -> str:
     catalog_df = pd.read_parquet(CATALOG_PATH)
-    clusters_json = catalog_df[["cluster_id", "nome", "descricao", "conceito"]].to_dict(orient="records")
+    clusters_json = catalog_df[["cluster_id", "nome",
+                                "descricao", "conceito"]].to_dict(orient="records")
 
     prompt = f"""
 Você é um assistente de clusterização que traduz a descrição do usuário para o cluster mais adequado.
