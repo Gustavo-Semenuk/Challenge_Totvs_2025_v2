@@ -6,39 +6,27 @@ from pathlib import Path
 
 load_dotenv()
 
-
-class DatabricksService:
-    def __init__(self):
-        server = os.getenv("SERVER_HOSTNAME")
-        path = os.getenv("HTTP_PATH")
-        token = os.getenv("DATABRICKS_TOKEN")
-
-        if not all([server, path, token]):
-            raise ValueError(
-                "As variáveis SERVER_HOSTNAME, HTTP_PATH e DATABRICKS_TOKEN devem estar definidas!")
-
-        self.conn = sql.connect(
-            server_hostname=server,
-            http_path=path,
-            access_token=token
-        )
-
-    def read_table(self, table_name: str) -> pd.DataFrame:
-        with self.conn.cursor() as cursor:
-            cursor.execute(f"SELECT * FROM {table_name}")
-            result = cursor.fetchall()
-            cols = [desc[0] for desc in cursor.description]
-            return pd.DataFrame(result, columns=cols)
-
-    def close(self):
-        self.conn.close()
-
-
 class ClusterDataService:
     def __init__(self):
-        base_dir = os.path.dirname(__file__)  # caminho da pasta atual (services)
-        # se o arquivo está em Hermes.ai/ms_clusterizacao/cluster_catalog.parquet
-        self.catalog_path = os.path.join(base_dir, "..","arquivo_parquet" ,"cluster_catalog.parquet")
+        base_dir = os.path.dirname(__file__)
+        self.parquet_dir = os.path.join(base_dir, "..", "arquivo_parquet")
+        self.catalog_path = os.path.join(self.parquet_dir, "cluster_catalog.parquet")
 
     def get_catalog(self) -> pd.DataFrame:
         return pd.read_parquet(self.catalog_path)
+
+    def get_cluster_data_por_nome(self, nome_cluster: str) -> pd.DataFrame:
+        arquivo_parquet = os.path.join(self.parquet_dir, f"{nome_cluster}.parquet")
+        if not os.path.exists(arquivo_parquet):
+            arquivo_parquet = os.path.join(self.parquet_dir, "cluster_1.parquet")
+        return pd.read_parquet(arquivo_parquet)
+
+    def get_cluster_data(self, cluster_id: int) -> pd.DataFrame:
+        # Busca pelo cluster_id no catálogo para obter o nome
+        catalog = self.get_catalog()
+        match = catalog[catalog["cluster_id"] == cluster_id]
+        if not match.empty:
+            nome_cluster = match.iloc[0]["nome"]
+        else:
+            nome_cluster = "cluster_1"
+        return self.get_cluster_data_por_nome(nome_cluster)

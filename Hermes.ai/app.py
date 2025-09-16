@@ -219,22 +219,23 @@ def IA():
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
+                try:
+                    # LLM escolhe o nome do cluster
+                    nome_cluster = escolher_cluster(user_input)
+                    df_cluster = obter_dados_cluster_por_nome(nome_cluster)
 
-                nome_cluster = escolher_cluster(user_input)  # retorna nome do cluster
-                df_cluster = obter_dados_cluster_por_nome(nome_cluster)  # lê parquet
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
+                    })
+                    st.chat_message("assistant").markdown(
+                        f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
+                    )
 
-                # Mensagem do assistente
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
-                })
-                st.chat_message("assistant").markdown(
-                    f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
-                )
+                    st.dataframe(df_cluster.head(10))
 
-
-                # Mostrar os dados
-                st.dataframe(df_cluster.head(10))
+                except Exception as e:
+                    st.error(f"Erro ao consultar o cluster: {str(e)}")
 
     with abas[1]:
         st.header("Tabela")
