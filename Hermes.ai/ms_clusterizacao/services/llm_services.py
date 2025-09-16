@@ -6,8 +6,8 @@ import requests
 # Configurações
 OLLAMA_URL = "http://54.233.85.14:11434/v1/completions"
 MODEL_NAME = "llama3:latest"
-PASTA_ARQUIVOS = "Hermes.ai/ms_clusterizacao/arquivo_parquet"
-CATALOG_PATH = "Hermes.ai/ms_clusterizacao/cluster_catalog.parquet"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # pasta atual do llm_services.py
+CATALOG_PATH = os.path.join(BASE_DIR, "..", "arquivo_parquet", "cluster_catalog.parquet")
 
 # Função para obter dados do cluster pelo nome
 def obter_dados_cluster_por_nome(nome_cluster: str) -> pd.DataFrame:
