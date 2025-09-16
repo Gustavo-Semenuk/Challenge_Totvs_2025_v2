@@ -215,27 +215,25 @@ def IA():
         user_input = st.chat_input("Digite sua pergunta")
 
         if user_input:
-            st.session_state.messages.append(
-                {"role": "user", "content": user_input})
+            st.session_state.messages.append({"role": "user", "content": user_input})
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
-
                 cluster = escolher_cluster(user_input)
-                if cluster is None:
+                if not cluster or "cluster_id" not in cluster:
                     st.error("Não foi possível determinar o cluster.")
                     return
 
-                cluster_id = cluster.get("cluster_id", 1)  # 1 como fallback
+                cluster_id = cluster["cluster_id"]
                 df_cluster = cds.get_cluster_data(cluster_id)
-                cds = ClusterDataService()
 
-            st.session_state.messages.append(
-                {"role": "assistant",
-                    "content": f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados"}
-            )
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados"
+            })
             st.chat_message("assistant").markdown(
-                f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados")
+                f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados"
+            )
 
             st.dataframe(df_cluster.head(10))
 
