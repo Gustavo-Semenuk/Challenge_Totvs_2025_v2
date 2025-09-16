@@ -6,7 +6,7 @@ import base64
 import pandas as pd
 import matplotlib.pyplot as plt
 from ms_clusterizacao.services.databricks_services import ClusterDataService
-from ms_clusterizacao.services.llm_services import escolher_cluster
+from ms_clusterizacao.services.llm_services import escolher_cluster, obter_dados_cluster_por_nome
 
 # Estrutura Home
 
@@ -219,11 +219,9 @@ def IA():
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
-                # LLM decide o nome do cluster
-                nome_cluster = escolher_cluster(user_input)
 
-                # Ler os dados do parquet correspondente
-                df_cluster = obter_dados_cluster_por_nome(nome_cluster)
+                nome_cluster = escolher_cluster(user_input)  # retorna nome do cluster
+                df_cluster = obter_dados_cluster_por_nome(nome_cluster)  # lê parquet
 
                 # Mensagem do assistente
                 st.session_state.messages.append({
@@ -233,6 +231,7 @@ def IA():
                 st.chat_message("assistant").markdown(
                     f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
                 )
+
 
                 # Mostrar os dados
                 st.dataframe(df_cluster.head(10))
