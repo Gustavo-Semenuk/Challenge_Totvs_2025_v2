@@ -12,7 +12,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # pasta services
 PASTA_ARQUIVOS = os.path.join(BASE_DIR, "..", "arquivo_parquet")
 CATALOG_PATH = os.path.join(PASTA_ARQUIVOS, "cluster_catalog.parquet")
 
-OLLAMA_URL = os.getenv("OLLAMA_URL")
+OLLAMA_URL = "http://54.233.85.14:11434/v1/completions"
 MODEL_NAME = "llama3:latest"
 
 
