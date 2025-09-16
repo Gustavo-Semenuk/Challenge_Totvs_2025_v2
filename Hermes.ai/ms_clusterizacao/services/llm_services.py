@@ -9,6 +9,8 @@ MODEL_NAME = "llama3:latest"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PASTA_ARQUIVOS = os.path.join(BASE_DIR, "..", "arquivo_parquet")
 
+CATALOG_PATH = 'cluster_catalog.parquet'
+
 # Função para obter dados do cluster pelo nome
 
 
