@@ -266,7 +266,7 @@ def IA():
                     # Scatter plot aleatório para visualização
                     np.random.seed(42)
                     X = np.random.rand(len(df_cluster), 2)  # posições aleatórias
-                    labels = df_cluster['cluster_id'].values
+                    labels = df_cluster['cluster'].values
 
                     plt.figure(figsize=(8,6))
                     plt.scatter(X[:,0], X[:,1], c=labels, cmap='viridis', alpha=0.7)
