@@ -218,7 +218,8 @@ def IA():
         user_input = st.chat_input("Digite sua pergunta")
 
         if user_input:
-            st.session_state.messages.append({"role": "user", "content": user_input})
+            st.session_state.messages.append(
+                {"role": "user", "content": user_input})
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
@@ -254,10 +255,12 @@ def IA():
         if user_input:
             with st.spinner("Carregando tabela"):
                 try:
-                    counts = df_cluster['CD_Cliente'].value_counts().sort_index()
+                    counts = df_cluster['CD_CLIENTE'].value_counts(
+                    ).sort_index()
 
-                    plt.figure(figsize=(8,6))
-                    plt.bar(counts.index.astype(str), counts.values, color='skyblue')
+                    plt.figure(figsize=(8, 6))
+                    plt.bar(counts.index.astype(str),
+                            counts.values, color='skyblue')
                     plt.xlabel("Cluster")
                     plt.ylabel("Número de clientes")
                     plt.title("Distribuição dos clusters")
@@ -265,11 +268,13 @@ def IA():
 
                     # Scatter plot aleatório para visualização
                     np.random.seed(42)
-                    X = np.random.rand(len(df_cluster), 2)  # posições aleatórias
+                    # posições aleatórias
+                    X = np.random.rand(len(df_cluster), 2)
                     labels = df_cluster['cluster'].values
 
-                    plt.figure(figsize=(8,6))
-                    plt.scatter(X[:,0], X[:,1], c=labels, cmap='viridis', alpha=0.7)
+                    plt.figure(figsize=(8, 6))
+                    plt.scatter(X[:, 0], X[:, 1], c=labels,
+                                cmap='viridis', alpha=0.7)
                     plt.xlabel("Componente X")
                     plt.ylabel("Componente Y")
                     plt.title("Distribuição dos clusters (visualização 2D)")
@@ -277,6 +282,7 @@ def IA():
                     st.pyplot(plt)
                 except Exception as e:
                     st.error(f"Erro ao consultar o cluster: {str(e)}")
+
 
 # Sidebar para navegação
 st.sidebar.image(
