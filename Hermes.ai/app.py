@@ -239,7 +239,8 @@ def IA():
 
     with abas[1]:
         st.header("Tabela")
-         with st.spinner("Carregando tabela"):
+        if user_input:
+            with st.spinner("Carregando tabela"):
                 try:
                     st.dataframe(df_cluster.head(10000))
                 except Exception as e:
