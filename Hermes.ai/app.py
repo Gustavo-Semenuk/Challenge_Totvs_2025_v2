@@ -222,7 +222,11 @@ def IA():
             with st.spinner("Consultando base de conhecimento..."):
 
                 cluster = escolher_cluster(user_input)
-                cluster_id = cluster["cluster_id"]
+                if cluster is None:
+                    st.error("Não foi possível determinar o cluster.")
+                    return
+
+                cluster_id = cluster.get("cluster_id", 1)  # 1 como fallback
                 df_cluster = cds.get_cluster_data(cluster_id)
                 cds = ClusterDataService()
 
