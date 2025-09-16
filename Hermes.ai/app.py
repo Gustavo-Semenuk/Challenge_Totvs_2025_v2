@@ -220,13 +220,15 @@ def IA():
 
             with st.spinner("Consultando base de conhecimento..."):
                 cluster = escolher_cluster(user_input)
-                if not cluster or "cluster_id" not in cluster:
+                if cluster is None:
                     st.error("Não foi possível determinar o cluster.")
                     return
 
-                cluster_id = cluster["cluster_id"]
-                df_cluster = cds.get_cluster_data(cluster_id)
+                cluster_id = cluster.get("cluster_id", 1)  # fallback
 
+                # Instancia o ClusterDataService ANTES de chamar o método
+                cds = ClusterDataService()
+                df_cluster = cds.get_cluster_data(cluster_id)
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados"
