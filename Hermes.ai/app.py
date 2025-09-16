@@ -219,25 +219,23 @@ def IA():
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
-                cluster = escolher_cluster(user_input)
-                if cluster is None:
-                    st.error("Não foi possível determinar o cluster.")
-                    return
+                # LLM decide o nome do cluster
+                nome_cluster = escolher_cluster(user_input)
 
-                cluster_id = cluster.get("cluster_id", 1)  # fallback
+                # Ler os dados do parquet correspondente
+                df_cluster = obter_dados_cluster_por_nome(nome_cluster)
 
-                # Instancia o ClusterDataService ANTES de chamar o método
-                cds = ClusterDataService()
-                df_cluster = cds.get_cluster_data(cluster_id)
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados"
-            })
-            st.chat_message("assistant").markdown(
-                f"Cluster escolhido: {cluster_id}, {len(df_cluster)} registros carregados"
-            )
+                # Mensagem do assistente
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
+                })
+                st.chat_message("assistant").markdown(
+                    f"Cluster escolhido: {nome_cluster}, {len(df_cluster)} registros carregados"
+                )
 
-            st.dataframe(df_cluster.head(10))
+                # Mostrar os dados
+                st.dataframe(df_cluster.head(10))
 
     with abas[1]:
         st.header("Tabela")
