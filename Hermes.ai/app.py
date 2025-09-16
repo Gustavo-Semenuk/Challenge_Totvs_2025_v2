@@ -255,7 +255,7 @@ def IA():
             with st.spinner("Carregando tabela"):
                 try:
                     pca = PCA(n_components=2)
-                    X_pca = pca.fit_transform(df_cluster.head(10000))
+                    X_pca = pca.fit_transform(df_cluster['cluster'].head(10000))
 
                     plt.figure(figsize=(8, 6))
                     plt.scatter(X_pca[:, 0], X_pca[:, 1], c=labels, cmap='viridis', alpha=0.7)
