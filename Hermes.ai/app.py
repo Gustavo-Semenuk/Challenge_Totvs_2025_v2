@@ -248,8 +248,21 @@ def IA():
 
     with abas[2]:
         st.header("Clusters")
+        if user_input:
+            with st.spinner("Carregando tabela"):
+                try:
+                    pca = PCA(n_components=2)
+                    X_pca = pca.fit_transform(df_cluster.head(10000))
 
-
+                    plt.figure(figsize=(8, 6))
+                    plt.scatter(X_pca[:, 0], X_pca[:, 1], c=labels, cmap='viridis', alpha=0.7)
+                    plt.xlabel("Componente Principal 1")
+                    plt.ylabel("Componente Principal 2")
+                    plt.title("Distribuição dos Clusters (PCA 2D)")
+                    plt.colorbar(label='Cluster')
+                    plt.show()
+                except Exception as e:
+                    st.error(f"Erro ao consultar o cluster: {str(e)}")
 
 # Sidebar para navegação
 st.sidebar.image(
