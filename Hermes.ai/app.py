@@ -9,7 +9,7 @@ import base64
 import pandas as pd
 import matplotlib.pyplot as plt
 from ms_clusterizacao.services.databricks_services import ClusterDataService
-from ms_clusterizacao.services.llm_services import escolher_cluster, obter_dados_cluster_por_nome, responder_pergunta_cluster
+from ms_clusterizacao.services.llm_services import escolher_cluster, obter_dados_cluster
 
 # Estrutura Home
 
@@ -204,7 +204,7 @@ def cluster():
 def IA():
     st.title("Hermes AI")
 
-    abas = st.tabs(["🤖 Hermes AI", "🎲 Tabela", "💡 Clusters"])
+    abas = st.tabs(["🤖Hermes AI", "🎲 Tabela", "💡 Clusters"])
 
     with abas[0]:
         st.header("Chat AI")
@@ -212,52 +212,88 @@ def IA():
         if "messages" not in st.session_state:
             st.session_state.messages = []
 
+        # Mostra histórico do chat
         for msg in st.session_state.messages:
             st.chat_message(msg["role"]).markdown(msg["content"])
 
+        # Input do usuário
         user_input = st.chat_input("Digite sua pergunta")
 
         if user_input:
-            st.session_state.messages.append(
-                {"role": "user", "content": user_input}
-            )
+            st.session_state.messages.append({"role": "user", "content": user_input})
             st.chat_message("user").markdown(user_input)
 
             with st.spinner("Consultando base de conhecimento..."):
                 try:
-
+                    # 1️⃣ Escolhe o cluster
                     resultado = escolher_cluster(user_input)
-                    cluster_id = resultado["cluster_id"]
+                    nome_cluster = resultado["nome"]
                     justificativa = resultado["justificativa"]
 
-                    # Busca dados do cluster escolhido
-                    df_cluster = obter_dados_cluster(cluster_id)
+                    # 2️⃣ Carrega dados do cluster
+                    df_cluster = obter_dados_cluster(nome_cluster)
 
-                    # Resposta inicial
-                    msg = (
-                        f"Cluster escolhido: {cluster_id}  \n"
-                        f"{len(df_cluster)} registros carregados.  \n"
-                        f"Justificativa: {justificativa}"
+                    # 3️⃣ Mostra cluster escolhido e justificativa
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": f"Cluster escolhido: {nome_cluster}\nJustificativa: {justificativa}"
+                    })
+                    st.chat_message("assistant").markdown(
+                        f"**Cluster escolhido:** {nome_cluster}\n**Justificativa:** {justificativa}"
                     )
-                    st.session_state.messages.append(
-                        {"role": "assistant", "content": msg}
-                    )
-                    st.chat_message("assistant").markdown(msg)
 
+                    # 4️⃣ Mostra preview dos dados do cluster
+                    st.subheader(f"Visualização do cluster {nome_cluster}")
                     st.dataframe(df_cluster.head(10))
 
-                    # Para o user fazer perguntas adicionais sobre o cluster escolhido
-                    pergunta = st.text_input(
-                        "Gostaria de saber algo sobre este cluster?"
-                    )
+                    # 5️⃣ Perguntas adicionais sobre o cluster
+                    pergunta = st.text_input("Gostaria de saber algo sobre este cluster?")
+
                     if pergunta:
-                        resposta = responder_pergunta_cluster(
-                            cluster_id, pergunta)
-                        st.write(resposta)
+                        # Aqui você chamaria uma função tipo `responder_pergunta_cluster`
+                        # que pode usar LLM para responder perguntas sobre df_cluster
+                        resposta_pergunta = responder_pergunta_cluster(nome_cluster, pergunta, df_cluster)
+                        st.chat_message("assistant").markdown(resposta_pergunta)
 
                 except Exception as e:
-                    st.error(f"Erro ao consultar o cluster: {e}")
+                    st.error(f"Erro ao consultar o cluster: {str(e)}")
 
+
+    def responder_pergunta_cluster(df_cluster: pd.DataFrame, pergunta: str) -> str:
+        """
+        Usa LLM para responder perguntas sobre o cluster com base em uma amostra do DataFrame.
+        """
+        
+        df_sample = df_cluster.head(20)
+        dados_json = df_sample.to_dict(orient="records")
+
+        prompt = f"""
+        Você é um assistente que irá explicar o motivo da escolha do cluster e tirar dúvidas breves sobre o cluster. Aqui está um cluster de dados:
+        {json.dumps(dados_json, ensure_ascii=False)}
+
+        Pergunta do usuário:
+        "{pergunta}"
+
+        Responda de forma clara e objetiva com base nos dados fornecidos. 
+        Se a resposta não puder ser encontrada nos dados, explique que o cluster apresentado foi treinado para se adequar a diversas possibilidades de as suas váriáveis utilizadas.
+        """
+
+        payload = {
+            "model": MODEL_NAME,
+            "prompt": prompt,
+            "temperature": 0
+        }
+
+        try:
+            response = requests.post(OLLAMA_URL, json=payload, timeout=20)
+            response.raise_for_status()
+            data = response.json()
+            # Chaves possíveis: "completion" ou "choices"
+            text = data.get("completion") or data["choices"][0]["text"]
+            return text.strip()
+        except Exception as e:
+            return f"Erro ao consultar LLM: {str(e)}"
+    
     with abas[1]:
         st.header("Tabela")
         if user_input:
