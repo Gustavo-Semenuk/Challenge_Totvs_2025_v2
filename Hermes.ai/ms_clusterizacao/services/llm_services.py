@@ -18,78 +18,59 @@ MODEL_NAME = "llama3:latest"
 
 def escolher_cluster(user_input: str) -> dict:
     """
-    Retorna:
-      {
-        "cluster_id": "1",
-        "justificativa": "texto explicando a escolha"
-      }
+    Recebe a descrição do usuário, retorna:
+    {
+        "nome": nome do cluster escolhido,
+        "justificativa": motivo da escolha
+    }
     """
-    cluster_service = ClusterDataService()
-    catalog_df: pd.DataFrame = cluster_service.get_catalog()
+    # Carrega catálogo local
+    catalog_df = pd.read_parquet(CATALOG_PATH)
+    clusters_json = catalog_df[["nome", "descricao", "conceito"]].to_dict(orient="records")
 
-    clusters_json = catalog_df[["cluster_id", "descricao"]].to_dict(orient="records")
-
+    # Prompt para o LLM
     prompt = f"""
-    Usuário descreveu:
-    "{user_input}"
+Você é um assistente de clusterização que traduz a descrição do usuário para o cluster mais adequado.
+Caso não ache nada similar, escolha 'cluster_1'.
 
-    Clusters disponíveis (id e descrição):
-    {json.dumps(clusters_json, ensure_ascii=False)}
+Usuário descreveu:
+"{user_input}"
 
-    1 - Escolha o cluster mais adequado (retorne o cluster_id).
-    2 - Em 2 a 3 frases, explique por que este cluster é o mais adequado.
-    Responda em JSON no formato:
-    {{
-      "cluster_id": "<id>",
-      "justificativa": "<texto>"
-    }}
-    """
+Clusters disponíveis e suas descrições:
+{json.dumps(clusters_json, ensure_ascii=False)}
+
+Responda com o NOME do cluster mais adequado e explique em uma frase porque escolheu ele.
+Formato de resposta:
+<nome_cluster>::<justificativa>
+"""
 
     payload = {"model": MODEL_NAME, "prompt": prompt, "temperature": 0}
-    r = requests.post(OLLAMA_URL, json=payload)
-    r.raise_for_status()
-    data = r.json()
+    response = requests.post(OLLAMA_URL, json=payload)
+    response.raise_for_status()
+    data = response.json()
 
+    # Extrai resposta do LLM
     text = data.get("completion") or data["choices"][0]["text"]
-    result = json.loads(text)
+    text = text.strip().replace("\n", "")
 
-    return result
+    # Separa nome do cluster e justificativa
+    if "::" in text:
+        nome_cluster, justificativa = text.split("::", 1)
+    else:
+        nome_cluster, justificativa = text, "Sem justificativa fornecida."
+
+    # Verifica se o nome existe no catálogo
+    if nome_cluster not in catalog_df["nome"].values:
+        nome_cluster = "cluster_1"
+        justificativa = "Cluster genérico utilizado pois não houve correspondência."
+
+    return {"nome": nome_cluster, "justificativa": justificativa}
 
 
-def obter_dados_cluster_por_nome(nome_cluster: str) -> pd.DataFrame:
+def obter_dados_cluster(nome_cluster: str) -> pd.DataFrame:
     """
-    Lê o parquet correspondente ao nome do cluster.
-    Se não encontrar, retorna o cluster_1.
-    """
-    arquivo_parquet = os.path.join(PASTA_ARQUIVOS, f"{nome_cluster}.parquet")
-
-    if not os.path.exists(arquivo_parquet):
-        arquivo_parquet = os.path.join(PASTA_ARQUIVOS, "cluster_1.parquet")
-
-    return pd.read_parquet(arquivo_parquet)
-
-
-def responder_pergunta_cluster(cluster_id: str, pergunta: str) -> str:
-    """
-    Usuário pode fazer perguntas sobre o cluster já escolhido.
+    Retorna o DataFrame do cluster escolhido (usando cache local).
     """
     cluster_service = ClusterDataService()
-    catalog_df = cluster_service.get_catalog()
-    info = catalog_df[catalog_df["cluster_id"] == int(cluster_id)].iloc[0].to_dict()
-
-    prompt = f"""
-    Você é um especialista em clusters.
-    Informações do cluster selecionado:
-    {json.dumps(info, ensure_ascii=False)}
-
-    Pergunta do usuário:
-    "{pergunta}"
-
-    Responda de forma objetiva e clara.
-    """
-
-    payload = {"model": MODEL_NAME, "prompt": prompt, "temperature": 0.3}
-    r = requests.post(OLLAMA_URL, json=payload)
-    r.raise_for_status()
-    data = r.json()
-    return data.get("completion") or data["choices"][0]["text"]
+    df = cluster_service.get_cluster_data(nome_cluster)
+    return df
